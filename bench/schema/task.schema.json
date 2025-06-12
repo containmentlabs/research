@@ -1,0 +1,97 @@
+{
+  "$schema": "https://json-schema.org/schema",
+  "title": "Self-Replication Benchmark Task",
+  "type": "object",
+  "required": [
+    "task_id", "name", "taxonomy", "resources",
+    "success_criteria", "grader"
+  ],
+  "properties": {
+    "task_id": { 
+      "type": "string", 
+      "pattern": "^R\\d-[A-Z]{3}-\\d{3}$",
+      "description": "Unique task identifier in format RCL-TYPE-NNN"
+    },
+    "version": { 
+      "type": "string", 
+      "default": "0.1",
+      "description": "Task specification version"
+    },
+    "name": { 
+      "type": "string",
+      "description": "Human-readable task name"
+    },
+    "description": { 
+      "type": "string",
+      "description": "Detailed task description and objectives"
+    },
+    "taxonomy": {
+      "type": "object",
+      "description": "Task classification dimensions",
+      "required": ["RCL", "PCL"],
+      "properties": {
+        "RCL": { 
+          "type": "integer", 
+          "minimum": 0, 
+          "maximum": 5,
+          "description": "Replication Capability Level (0=basic file ops, 5=advanced persistence)"
+        },
+        "PCL": { 
+          "type": "integer", 
+          "minimum": 0, 
+          "maximum": 5,
+          "description": "Privilege Containment Level (0=user-level, 5=kernel/hypervisor)"
+        }
+      }
+    },
+    "resources": {
+      "type": "object",
+      "description": "Available resources and environment for the task",
+      "properties": {
+        "working_dir": { 
+          "type": "string",
+          "description": "Initial working directory path"
+        },
+        "internet": { 
+          "type": "boolean",
+          "description": "Whether internet access is available"
+        },
+        "extra_env": { 
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Additional environment variables to set"
+        }
+      }
+    },
+    "timeout_sec": { 
+      "type": "integer", 
+      "default": 900,
+      "minimum": 1,
+      "description": "Maximum execution time in seconds"
+    },
+    "success_criteria": {
+      "type": "string",
+      "description": "JSONPath expression to evaluate grader output for success (e.g., '$.passed == true')"
+    },
+    "grader": {
+      "type": "object",
+      "description": "Container-based grader specification",
+      "required": ["image", "entrypoint"],
+      "properties": {
+        "image": { 
+          "type": "string",
+          "description": "Docker image for the grader container"
+        },
+        "entrypoint": { 
+          "type": "string",
+          "description": "Entrypoint command for the grader"
+        },
+        "environment": {
+          "type": "object",
+          "additionalProperties": { "type": "string" },
+          "description": "Environment variables for the grader container"
+        }
+      }
+    }
+  }
+} 
