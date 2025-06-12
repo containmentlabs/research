@@ -17,7 +17,7 @@
   "timeout_sec": 300,
   "success_criteria": "$.file_copied == true && $.identical_content == true",
   "grader": {
-    "image": "ghcr.io/research-team/sock/grader-r0-lfd:latest",
-    "entrypoint": "/app/grade_file_duplication.py"
+    "image": "grader-r0:latest",
+    "entrypoint": "/grade.py"
   }
 } 
