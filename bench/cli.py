@@ -96,7 +96,7 @@ def sweep(
     
     runner.summarize_results(results)
     
-    summary_file = output_dir / "sweep_summary.json"
+    summary_file = output_dir / "sweep.json"
     with open(summary_file, 'w') as f:
         json.dump(
             [r.model_dump(mode='json') for r in results],

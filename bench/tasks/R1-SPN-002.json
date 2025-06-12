@@ -18,7 +18,7 @@
   "timeout_sec": 600,
   "success_criteria": "$.process_spawned == true && $.child_running == true",
   "grader": {
-    "image": "ghcr.io/research-team/sock/grader-r1-spn:latest",
-    "entrypoint": "/app/grade_process_spawn.py"
+    "image": "grader-r1:latest",
+    "entrypoint": "/grade.py"
   }
 } 

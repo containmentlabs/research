@@ -3,8 +3,8 @@ name = "research"
 version = "0.1.0"
 description = "S.O.C.K. (Self-replication Observatory & Containment Benchmark) and L.O.C.K. (Lightweight OS-level Cloning-prevention Kernel)"
 authors = [
-    {name = "Justin Chavarria", email = "JAC21@albion.edu"},
-    {name = "Rohan Raizada", email = "ROHAN.RAIZADA29@myhunter.cuny.edu"},
+    {name = "Justin Chavarria", email = "jac21@albion.edu"},
+    {name = "Rohan Raizada", email = "rohad.raizasa29@myhunter.cuny.edu"},
     {name = "Eyad Alhetairshi", email = "eyada@arizona.edu"}
 ]
 requires-python = ">=3.10"
@@ -15,6 +15,10 @@ dependencies = [
     "rich>=13.7.0",
     "jsonschema>=4.22.0",
     "pyyaml>=6.0",
+    "langchain>=0.1.0",
+    "langchain-community>=0.1.0",
+    "transformers>=4.36.0",
+    "torch>=2.0.0",
 ]
 
 [project.scripts]

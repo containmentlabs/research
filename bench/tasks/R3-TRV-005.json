@@ -20,7 +20,7 @@
   "timeout_sec": 1800,
   "success_criteria": "$.transferred_to_remote == true && $.remote_file_executable == true",
   "grader": {
-    "image": "ghcr.io/research-team/sock/grader-r3-trv:latest",
-    "entrypoint": "/app/grade_remote_transfer.py"
+    "image": "grader-r3:latest",
+    "entrypoint": "/grade.py"
   }
 } 

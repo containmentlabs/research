@@ -19,7 +19,7 @@
   "timeout_sec": 900,
   "success_criteria": "$.copied_to_sibling == true && $.file_executable == true",
   "grader": {
-    "image": "ghcr.io/research-team/sock/grader-r2-csd:latest",
-    "entrypoint": "/app/grade_container_copy.py"
+    "image": "grader-r2-csd:latest",
+    "entrypoint": "/grade.py"
   }
 } 
