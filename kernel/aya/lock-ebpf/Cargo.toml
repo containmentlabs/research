@@ -1,0 +1,21 @@
+[package]
+name = "lock-ebpf"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+aya-ebpf = "0.1"
+aya-log-ebpf = "0.1"
+lock-common = { path = "../lock-common" }
+
+[[bin]]
+name = "lock"
+path = "src/main.rs"
+
+[profile.dev]
+opt-level = 3
+overflow-checks = false
+panic = "abort"
+
+[profile.release]
+panic = "abort" 

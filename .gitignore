@@ -61,3 +61,5 @@ checkpoints/
 .env
 .env.local
 Thumbs.db 
+target/
+cargo.lock
