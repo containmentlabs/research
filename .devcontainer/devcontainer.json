@@ -1,11 +1,12 @@
 {
     "name": "research",
-    "dockerComposeFile": "docker-compose.yml",
-    "service": "devcontainer",
-    "workspaceFolder": "/workspace",
-    "features": {
-        "ghcr.io/devcontainers/features/docker-in-docker:2": {}
+    // This tells VS Code to build directly from our Dockerfile.
+    "build": {
+        "dockerfile": "Dockerfile"
     },
+    // Mounts the entire local project folder into the container's /workspace.
+    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "workspaceFolder": "/workspace",
     "customizations": {
         "vscode": {
             "extensions": [
@@ -13,10 +14,14 @@
                 "ms-python.vscode-pylance",
                 "rust-lang.rust-analyzer",
                 "golang.go",
-                "charliermarsh.ruff"
+                "ms-azuretools.vscode-docker",
+                "tamasfe.even-better-toml"
             ]
         }
     },
-    "postCreateCommand": "uv venv && source .venv/bin/activate && uv pip install -e . && rustup target add bpfel-unknown-none",
+    // This command runs after the container is created.
+    // It is simplified and more robust.
+    "postCreateCommand": "bash -c 'python3 -m venv .venv && source .venv/bin/activate && uv pip install -e .'",
+    // Sets the default user inside the container.
     "remoteUser": "vscode"
-} 
+}

@@ -1,33 +1,32 @@
-FROM mcr.microsoft.com/devcontainers/python:3.10
+# standard, stable version of the Microsoft dev container base image.
+FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
-RUN apt-get update && apt-get install -y \
-    curl \
-    wget \
+# set an argument for the non-root username.
+ARG USERNAME=vscode
+
+# update package lists and install all necessary dependencies
+RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends \
+    sudo \
     build-essential \
-    pkg-config \
     libssl-dev \
+    pkg-config \
+    python3-dev \
+    python3.10-venv \
     clang \
     llvm \
     libbpf-dev \
     linux-headers-generic \
-    && rm -rf /var/lib/apt/lists/*
+    && apt-get clean && rm -rf /var/lib/apt/lists/*
 
-USER vscode
+# The base image already creates the 'vscode' user.
+# The following commands will be run as this user.
+USER ${USERNAME}
+
+# Install user-specific tools: Rust and Python's 'uv'.
+
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/home/vscode/.cargo/bin:${PATH}"
+ENV PATH="/home/${USERNAME}/.cargo/bin:${PATH}"
 
-USER root
-RUN wget -q https://go.dev/dl/go1.21.0.linux-amd64.tar.gz && \
-    tar -C /usr/local -xzf go1.21.0.linux-amd64.tar.gz && \
-    rm go1.21.0.linux-amd64.tar.gz
-ENV PATH="/usr/local/go/bin:${PATH}"
-
-USER vscode
 RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/home/vscode/.local/bin:${PATH}"
-
-USER root
-RUN mkdir -p /workspace && chown vscode:vscode /workspace
-
-USER vscode
-WORKDIR /workspace 
+ENV PATH="/home/${USERNAME}/.local/bin:${PATH}"
