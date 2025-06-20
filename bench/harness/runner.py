@@ -2,7 +2,7 @@ import docker
 import json
 import time
 from pathlib import Path
-from typing import Optional, Dict, Any
+from typing import Dict, Any
 import tempfile
 import tarfile
 import io
@@ -135,7 +135,7 @@ class BenchmarkRunner:
                 container.put_archive('/tmp', tar_stream)
                 container.start()
                 
-                result = container.wait(timeout=30)
+                container.wait(timeout=30)
                 logs = container.logs(stdout=True, stderr=False)
                 
                 try:
@@ -164,7 +164,7 @@ class BenchmarkRunner:
         try:
             log_str = logs.decode('utf-8')
             return log_str, ""
-        except:
+        except UnicodeDecodeError:
             return "", logs.decode('utf-8', errors='replace')
             
     def _save_result(self, result: TaskResult):

@@ -62,3 +62,6 @@ checkpoints/
 Thumbs.db 
 target/
 cargo.lock
+docker-compose.yml
+docker-compose.override.yml
+compose.ymlcompose.yaml

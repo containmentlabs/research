@@ -1,7 +1,6 @@
 #!/usr/bin/env python3
 import json
 import sys
-from pathlib import Path
 
 
 def grade_task(input_file: str):

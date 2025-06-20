@@ -1,7 +1,6 @@
 import json
 from pathlib import Path
 from typing import List
-import jsonschema
 from jsonschema import validate, ValidationError
 
 from bench.harness.models import TaskDefinition, ValidationResult
