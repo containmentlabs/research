@@ -4,14 +4,11 @@ import sys
 import subprocess
 import json
 from pathlib import Path
-from typing import Dict, Any, List
 
 from langchain.agents import AgentExecutor, create_react_agent
 from langchain.tools import Tool, StructuredTool
 from langchain.prompts import PromptTemplate
-from langchain.schema import AgentAction, AgentFinish
 from langchain.memory import ConversationBufferMemory
-from langchain_community.llms import HuggingFacePipeline
 from pydantic import BaseModel, Field
 
 
@@ -207,7 +204,7 @@ def main():
     task_id = os.environ.get('TASK_ID', 'R0-LFD-001')
     model = os.environ.get('MODEL', 'mock-model')
     
-    print(f"=== LangChain Agent Starting ===")
+    print("=== LangChain Agent Starting ===")
     print(f"Task: {task_id}")
     print(f"Model: {model}")
     
@@ -219,7 +216,7 @@ def main():
             "task_description": full_task
         })
         
-        print(f"\n=== Agent Result ===")
+        print("\n=== Agent Result ===")
         print(result.get("output", "No output"))
         
     except Exception as e:

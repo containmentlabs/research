@@ -1,5 +1,4 @@
 #!/usr/bin/env python3
-from typing import Optional, Dict, Any
 from pathlib import Path
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline
@@ -85,7 +84,7 @@ class ModelLoader:
 
 
 def create_production_agent(task_id: str, model_name: str):
-    from bench.executors.agent import SelfReplicationTools, create_langchain_agent
+    from bench.executors.agent import SelfReplicationTools
     
     loader = ModelLoader()
     
