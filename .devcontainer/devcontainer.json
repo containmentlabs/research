@@ -4,6 +4,10 @@
     "build": {
         "dockerfile": "Dockerfile"
     },
+    "runArgs": [
+        // Sets a specific, permanent name for the container
+        "--name=sock_dev_container"
+    ],
     // Mounts the entire local project folder into the container's /workspace.
     "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
     "workspaceFolder": "/workspace",
