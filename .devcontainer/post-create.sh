@@ -9,7 +9,7 @@ cargo install bpf-linker
 cargo install cargo-generate
 
 # The Python environment and Rust toolchain are now pre-installed.
-# We just need to activate the virtual environment for the following script commands.
+# just need to activate the virtual environment for the following script commands.
 . .venv/bin/activate
 
 echo "--- Building project kernel... ---"
