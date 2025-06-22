@@ -1,6 +1,6 @@
-use std::process::Command as ProcessCommand;
-use std::env;
 use clap::Parser;
+use std::env;
+use std::process::Command as ProcessCommand;
 
 #[derive(Debug, Parser)]
 pub struct Options {
@@ -31,19 +31,19 @@ fn main() -> Result<(), anyhow::Error> {
 fn build_ebpf(opts: BuildEbpfOptions) -> Result<(), anyhow::Error> {
     let dir = env::current_dir()?;
     let target = "bpfel-unknown-none";
-    
+
     let mut args = vec![
         "+nightly",
         "build",
         "--target",
         target,
         "-Z",
-        "build-std=core",
+        "build-std=core,alloc",
     ];
     if opts.release {
         args.push("--release");
     }
-    
+
     let status = ProcessCommand::new("cargo")
         .args(&args)
         .current_dir(dir.join("lock-ebpf"))
@@ -52,6 +52,6 @@ fn build_ebpf(opts: BuildEbpfOptions) -> Result<(), anyhow::Error> {
     if !status.success() {
         anyhow::bail!("Failed to build eBPF program");
     }
-    
+
     Ok(())
-} 
+}

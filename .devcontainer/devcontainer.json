@@ -1,31 +1,16 @@
 {
     "name": "research",
-    // This tells VS Code to build directly from our Dockerfile.
-    "build": {
-        "dockerfile": "Dockerfile"
-    },
-    "runArgs": [
-        // Sets a specific, permanent name for the container
-        "--name=sock_dev_container"
-    ],
-    // Mounts the entire local project folder into the container's /workspace.
-    "workspaceMount": "source=${localWorkspaceFolder},target=/workspace,type=bind,consistency=cached",
+    "dockerComposeFile": "../docker-compose.yml",
+    "service": "research-app",
     "workspaceFolder": "/workspace",
+    "postCreateCommand": ".devcontainer/post-create.sh",
+    "remoteUser": "vscode",
     "customizations": {
         "vscode": {
             "extensions": [
                 "ms-python.python",
-                "ms-python.vscode-pylance",
-                "rust-lang.rust-analyzer",
-                "golang.go",
-                "ms-azuretools.vscode-docker",
-                "tamasfe.even-better-toml"
+                "rust-lang.rust-analyzer"
             ]
         }
-    },
-    // This command runs after the container is created.
-    // It is simplified and more robust.
-    "postCreateCommand": "bash -c 'python3 -m venv .venv && source .venv/bin/activate && uv pip install -e .'",
-    // Sets the default user inside the container.
-    "remoteUser": "vscode"
+    }
 }

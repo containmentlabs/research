@@ -7,12 +7,13 @@ use aya_ebpf::{
     maps::{HashMap, PerfEventArray},
     programs::{ProbeContext, XdpContext},
     helpers::bpf_ktime_get_ns,
+    EbpfContext
 };
 use aya_log_ebpf::info;
 use lock_common::BlockEvent;
 
 #[map]
-static mut EVENTS: PerfEventArray<BlockEvent> = PerfEventArray::with_max_entries(1024, 0);
+static mut EVENTS: PerfEventArray<BlockEvent> = PerfEventArray::new(0);
 
 #[map]
 static mut BLOCKED_SYSCALLS: HashMap<u32, u32> = HashMap::with_max_entries(1024, 0);
@@ -39,7 +40,7 @@ fn try_lock_connect(ctx: ProbeContext) -> Result<u32, u32> {
     unsafe {
         EVENTS.output(&ctx, &event, 0);
         
-        let counter = BLOCKED_SYSCALLS.get_ptr_mut(&42).ok_or(0)?;
+        let counter = BLOCKED_SYSCALLS.get_ptr_mut(&42).ok_or(0u32)?;
         *counter += 1;
     }
     
@@ -70,7 +71,7 @@ fn try_lock_clone(ctx: ProbeContext) -> Result<u32, u32> {
     unsafe {
         EVENTS.output(&ctx, &event, 0);
         
-        let counter = BLOCKED_SYSCALLS.get_ptr_mut(&56).ok_or(0)?;
+        let counter = BLOCKED_SYSCALLS.get_ptr_mut(&56).ok_or(0u32)?;
         *counter += 1;
     }
     
