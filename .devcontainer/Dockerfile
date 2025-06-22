@@ -1,11 +1,15 @@
 # Use the official dev containers base image for Ubuntu 22.04
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
-# Install essential system dependencies for BPF development, Rust, Go, and Python.
-# Using LLVM/Clang 18 as it is a recent, stable version well-suited for eBPF development.
-# libbpf-dev and libelf-dev are required by user-space loaders and tooling.
-# linux-headers-generic provides kernel headers needed for some eBPF operations and tools like bpftool.
+# Install essential system dependencies for BPF development and Python
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
+    && apt-get -y install --no-install-recommends wget software-properties-common \
+    # Get and run the LLVM installer script for version 18
+    && wget https://apt.llvm.org/llvm.sh \
+    && chmod +x llvm.sh \
+    && ./llvm.sh 18 \
+    && rm llvm.sh \
+    # Now install all system dependencies
     && apt-get -y install --no-install-recommends \
     build-essential libssl-dev pkg-config python3-dev python3.10-venv \
     clang-18 llvm-18 llvm-18-dev libclang-18-dev libpolly-18-dev \
@@ -35,12 +39,8 @@ RUN rustup toolchain install nightly \
 RUN cargo install bpf-linker
 RUN cargo install cargo-generate
 
-# Install the 'uv' Python package manager
-RUN curl -LsSf https://astral.sh/uv/install.sh | sh
-ENV PATH="/home/vscode/.local/bin:${PATH}"
-
 # Copy the Python project definition and install dependencies into the image.
-# This creates the virtual environment ahead of time.
-COPY --chown=vscode:vscode pyproject.toml./
-RUN uv venv
-RUN uv pip install -e ".[dev]"
+# This creates the virtual environment ahead of time using standard Python tools.
+COPY --chown=vscode:vscode pyproject.toml ./
+RUN python3 -m venv .venv
+RUN . .venv/bin/activate && pip install -e ".[dev]"

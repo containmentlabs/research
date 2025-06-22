@@ -1,8 +1,8 @@
 // In kernel/aya/src/main.rs
 
 use aya::programs::KProbe;
-use aya::{include_bytes_aligned, Ebpf};
-use aya_log::EbpfLogger;
+use aya::{include_bytes_aligned, Bpf};
+use aya_log::BpfLogger;
 use log::{info, warn};
 use tokio::signal;
 
@@ -10,17 +10,17 @@ use tokio::signal;
 async fn main() -> Result<(), anyhow::Error> {
     // This will include your compiled eBPF object file
     #[cfg(debug_assertions)]
-    let mut bpf = Ebpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/debug/lock"
+    let mut bpf = Bpf::load(include_bytes_aligned!(
+        "../target/bpfel-unknown-none/debug/lock"
     ))?;
     #[cfg(not(debug_assertions))]
-    let mut bpf = Ebpf::load(include_bytes_aligned!(
-        "../../target/bpfel-unknown-none/release/lock"
+    let mut bpf = Bpf::load(include_bytes_aligned!(
+        "../target/bpfel-unknown-none/release/lock"
     ))?;
 
     // This is the critical step to enable logging.
     // It finds the map named "AYA_LOGS" and starts polling it for records.
-    if let Err(e) = EbpfLogger::init(&mut bpf) {
+    if let Err(e) = BpfLogger::init(&mut bpf) {
         warn!("Failed to initialize eBPF logger: {}", e);
     }
 
