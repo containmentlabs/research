@@ -25,8 +25,9 @@ echo "Building user-space loader..."
 cargo build --release
 
 echo "Building Go loader..."
-cd../loader
-go build -o lock-loader.
+cd ../loader
+go mod tidy
+go build -o lock-loader .
 
 echo "L.O.C.K. kernel build complete!"
 echo ""

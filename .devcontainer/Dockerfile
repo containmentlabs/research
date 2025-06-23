@@ -3,7 +3,7 @@ FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
 # Install essential system dependencies for BPF development and Python
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
-    && apt-get -y install --no-install-recommends wget software-properties-common \
+    && apt-get -y install --no-install-recommends wget software-properties-common gnupg lsb-release \
     # Get and run the LLVM installer script for version 18
     && wget https://apt.llvm.org/llvm.sh \
     && chmod +x llvm.sh \
@@ -17,27 +17,21 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     curl git golang-go \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
+
 # Switch to the non-root 'vscode' user for better security practices
 USER vscode
 # Set the primary working directory
 WORKDIR /workspace
 
-# Install the Rust toolchain using rustup.
-# This installs the 'stable' toolchain by default.
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
+# Install the Rust toolchain and essential eBPF build tools in a single layer
+# to reduce image size and potential build failures due to resource exhaustion.
+RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
+    && . "/home/vscode/.cargo/env" \
+    && rustup toolchain install nightly \
+    && rustup component add rust-src --toolchain nightly \
+    && cargo install bpf-linker \
+    && cargo install cargo-generate
 ENV PATH="/home/vscode/.cargo/bin:${PATH}"
-
-# Install the 'nightly' toolchain, which is required by Aya for eBPF compilation.
-# Also, pre-install the 'rust-src' component, which is necessary for `-Z build-std`.
-# This moves setup from a runtime script into the image build for reliability.
-RUN rustup toolchain install nightly \
-    && rustup component add rust-src --toolchain nightly
-
-# Install the essential Aya eBPF build tools.
-# bpf-linker: The specialized linker for Aya eBPF programs. This is the core fix.
-# cargo-generate: A utility for scaffolding new Aya projects from templates.
-RUN cargo install bpf-linker
-RUN cargo install cargo-generate
 
 # Copy the Python project definition and install dependencies into the image.
 # This creates the virtual environment ahead of time using standard Python tools.
