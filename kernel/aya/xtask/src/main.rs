@@ -1,5 +1,6 @@
 use clap::Parser;
 use std::env;
+use std::fs;
 use std::process::Command as ProcessCommand;
 
 #[derive(Debug, Parser)]
@@ -52,6 +53,19 @@ fn build_ebpf(opts: BuildEbpfOptions) -> Result<(), anyhow::Error> {
     if !status.success() {
         anyhow::bail!("Failed to build eBPF program");
     }
+
+    let profile = if opts.release { "release" } else { "debug" };
+    let binary_path = dir.join(format!(
+        "lock-ebpf/target/{}/{}/lock",
+        target, profile
+    ));
+
+    let out_dir = dir.join("target/ebpf");
+    fs::create_dir_all(&out_dir)?;
+    let out_path = out_dir.join("lock");
+    fs::copy(&binary_path, &out_path)?;
+
+    println!("eBPF binary copied to {}", out_path.display());
 
     Ok(())
 }

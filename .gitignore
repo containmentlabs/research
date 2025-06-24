@@ -62,5 +62,4 @@ checkpoints/
 Thumbs.db 
 target/
 cargo.lock
-build-log.txt
 todo.md
