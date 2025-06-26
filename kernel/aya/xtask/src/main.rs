@@ -54,12 +54,7 @@ fn build_ebpf(opts: BuildEbpfOptions) -> Result<(), anyhow::Error> {
         anyhow::bail!("Failed to build eBPF program");
     }
 
-    let profile = if opts.release { "release" } else { "debug" };
-    let binary_path = dir.join(format!(
-        "lock-ebpf/target/{}/{}/lock",
-        target, profile
-    ));
-
+    let binary_path = dir.join("target/bpfel-unknown-none/release/lock");
     let out_dir = dir.join("target/ebpf");
     fs::create_dir_all(&out_dir)?;
     let out_path = out_dir.join("lock");

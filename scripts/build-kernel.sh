@@ -17,8 +17,8 @@ else
     echo "xtask failed, attempting to build directly..."
     # This fallback is also more likely to succeed now.
     cd lock-ebpf
-    cargo +nightly build --release
-    cd..
+    cargo +nightly build --target bpfel-unknown-none -Z build-std=core,alloc --release
+    cd ..
 fi
 
 echo "Building user-space loader..."
