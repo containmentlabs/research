@@ -63,3 +63,6 @@ Thumbs.db
 target/
 cargo.lock
 todo.md
+build-log.txt
+lock
+lock.log

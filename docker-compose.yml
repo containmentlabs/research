@@ -10,8 +10,14 @@ services:
     pid: host
     volumes:
       - .:/workspace:cached
+      - rustup_data:/home/vscode/.rustup
+      - cargo_data:/home/vscode/.cargo
       - /var/run/docker.sock:/var/run/docker.sock
       # Mount essential kernel filesystems for eBPF operation
       - /sys/kernel/btf:/sys/kernel/btf:ro
       - /sys/kernel/debug:/sys/kernel/debug:rw
     command: sleep infinity
+
+volumes:
+  rustup_data:
+  cargo_data:
