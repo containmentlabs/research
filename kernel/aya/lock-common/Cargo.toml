@@ -1,14 +1,15 @@
-[package]
-name = "lock-common"
-version = "0.1.0"
-edition = "2021"
+    [package]
+    name = "lock-common"
+    version = "0.1.0"
+    edition = "2021"
+    publish = false
 
-[features]
-default = []
-user = ["aya"]
+    [features]
+    default = []
+    user = ["aya"]
 
-[dependencies]
-aya = { version = "0.12", optional = true }
+    [dependencies]
+    aya = { version = "0.14", features = ["user"], optional = true }
 
-[lib]
-path = "src/lib.rs" 
+    [lib]
+    path = "src/lib.rs"

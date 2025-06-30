@@ -1,13 +1,12 @@
-#![no_std]
+    #![no_std]
 
-#[repr(C)]
-#[derive(Clone, Copy)]
-pub struct BlockEvent {
-    pub pid: u32,
-    pub uid: u32,
-    pub syscall: u32,
-    pub timestamp: u64,
-}
+    use aya::Pod;
 
-#[cfg(feature = "user")]
-unsafe impl aya::Pod for BlockEvent {} 
+    #[repr(C)]
+    #[derive(Clone, Copy, Debug, Pod)]
+    pub struct BlockEvent {
+        pub pid: u32,
+        pub uid: u32,
+        pub syscall: u32,
+        pub timestamp: u64,
+    }

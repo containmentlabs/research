@@ -1,44 +1,82 @@
-// In kernel/aya/src/main.rs
+    use anyhow::anyhow;
+    use aya::{
+        include_bytes_aligned,
+        maps::perf::AsyncPerfEventArray,
+        programs::{KProbe, Xdp, XdpFlags},
+        util::online_cpus,
+        Bpf,
+    };
+    use aya_log::EbpfLogger;
+    use bytes::BytesMut;
+    use clap::Parser;
+    use log::{info, warn};
+    use lock_common::BlockEvent;
+    use std::net::{SocketAddr, UdpSocket};
+    use tokio::{signal, task};
 
-use aya::programs::KProbe;
-use aya::{include_bytes_aligned, Bpf};
-use aya_log::BpfLogger;
-use log::{info, warn};
-use tokio::signal;
+    #[derive(Debug, Parser)]
+    struct Opt;
 
-#[tokio::main]
-async fn main() -> Result<(), anyhow::Error> {
-    // This will include your compiled eBPF object file
-    #[cfg(debug_assertions)]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
-        "../target/bpfel-unknown-none/debug/lock"
-    ))?;
-    #[cfg(not(debug_assertions))]
-    let mut bpf = Bpf::load(include_bytes_aligned!(
-        "../target/bpfel-unknown-none/release/lock"
-    ))?;
+    #[tokio::main]
+    async fn main() -> Result<(), anyhow::Error> {
+        let _opt = Opt::parse();
 
-    // This is the critical step to enable logging.
-    // It finds the map named "AYA_LOGS" and starts polling it for records.
-    if let Err(e) = BpfLogger::init(&mut bpf) {
-        warn!("Failed to initialize eBPF logger: {}", e);
+        env_logger::init();
+
+        let mut bpf = Bpf::load(include_bytes_aligned!(
+            "../../target/bpfel-unknown-none/debug/lock"
+        ))?;
+
+        if let Err(e) = EbpfLogger::init(&mut bpf) {
+            warn!("failed to initialize eBPF logger: {}", e);
+        }
+        
+        let connect_probe: &mut KProbe = bpf.program_mut("lock_connect").unwrap().try_into()?;
+        connect_probe.load()?;
+        connect_probe.attach("inet_csk_accept", 0)?;
+
+        let clone_probe: &mut KProbe = bpf.program_mut("lock_clone").unwrap().try_into()?;
+        clone_probe.load()?;
+        clone_probe.attach("kernel_clone", 0)?;
+
+        let xdp_probe: &mut Xdp = bpf.program_mut("lock_xdp").unwrap().try_into()?;
+        xdp_probe.load()?;
+        let _ = xdp_probe.attach("lo", XdpFlags::default());
+
+        let mut perf_array = AsyncPerfEventArray::try_from(
+            bpf.map_mut("EVENTS")
+                .ok_or(anyhow!("EVENTS map not found"))?,
+        )?;
+
+        for cpu_id in online_cpus()? {
+            let mut buf = perf_array.open(cpu_id, None)?;
+
+            task::spawn(async move {
+                let mut buffers = (0..10)
+                    .map(|_| BytesMut::with_capacity(1024))
+                    .collect::<Vec<_>>();
+
+                loop {
+                    let events = buf.read_events(&mut buffers).await.unwrap();
+                    for i in 0..events.read {
+                        let buf = &mut buffers[i];
+                        let ptr = buf.as_ptr() as *const BlockEvent;
+                        let data = unsafe { ptr.read_unaligned() };
+                        info!("{:?}", data);
+                    }
+                }
+            });
+        }
+
+        info!("Waiting for Ctrl-C...");
+
+        let server_addr: SocketAddr = "127.0.0.1:8080".parse().unwrap();
+        let client_addr: SocketAddr = "127.0.0.1:8081".parse().unwrap();
+        let socket = UdpSocket::bind(server_addr)?;
+        let _ = socket.send_to(b"hello", client_addr);
+
+        signal::ctrl_c().await.expect("failed to listen for event");
+        info!("Exiting...");
+
+        Ok(())
     }
-
-    // Attach the kprobe to the clone system call
-    let clone_prog: &mut KProbe = bpf.program_mut("lock_clone").unwrap().try_into()?;
-    clone_prog.load()?;
-    // Note: the kernel function name may differ based on kernel version
-    clone_prog.attach("__x64_sys_clone", 0)?;
-
-    // Attach the kprobe to the connect system call
-    let connect_prog: &mut KProbe = bpf.program_mut("lock_connect").unwrap().try_into()?;
-    connect_prog.load()?;
-    // Note: the kernel function name may differ based on kernel version
-    connect_prog.attach("__x64_sys_connect", 0)?;
-
-    info!("Waiting for Ctrl-C...");
-    signal::ctrl_c().await?;
-    info!("Exiting...");
-
-    Ok(())
-}
