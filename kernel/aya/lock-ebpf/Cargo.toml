@@ -1,39 +1,37 @@
-    [package]
-    name = "lock-ebpf"
-    version = "0.1.0"
-    edition = "2021"
-    publish = false
+[package]
+name = "lock-ebpf"
+version = "0.1.0"
+edition = "2021"
+publish = false
 
-    [dependencies]
-    aya-ebpf = "0.1"
-    aya-log-ebpf = "0.1"
-    lock-common = { path = "../lock-common" }
-    num_enum = { version = "0.7", default-features = false }
+[dependencies]
+aya-ebpf = "0.1"
+aya-log-ebpf = "0.1"
+lock-common = { path = "../lock-common" }
+num_enum = { version = "0.7", default-features = false }
 
-    [[bin]]
-    name = "lock"
-    path = "src/main.rs"
+[[bin]]
+name = "lock"
+path = "src/main.rs"
 
-    [profile.dev]
-    opt-level = 3
-    debug = false
-    debug-assertions = false
-    overflow-checks = false
-    lto = true
-    panic = "abort"
-    incremental = false
-    codegen-units = 1
-    release = false
+[profile.dev]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = true
+panic = "abort"
+incremental = false
+codegen-units = 1
+release = false
 
-    [profile.release]
-    opt-level = 3
-    debug = false
-    debug-assertions = false
-    overflow-checks = false
-    lto = true
-    panic = "abort"
-    incremental = false
-    codegen-units = 1
-    release = true
-
-    [workspace]
+[profile.release]
+opt-level = 3
+debug = false
+debug-assertions = false
+overflow-checks = false
+lto = true
+panic = "abort"
+incremental = false
+codegen-units = 1
+release = true

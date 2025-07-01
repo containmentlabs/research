@@ -9,7 +9,7 @@
     user = ["aya"]
 
     [dependencies]
-    aya = { version = "0.14", features = ["user"], optional = true }
+    aya = { version = "0.13.1", optional = true }
 
     [lib]
     path = "src/lib.rs"
