@@ -8,14 +8,14 @@
     aya-ebpf = "0.1"
     aya-log-ebpf = "0.1"
     lock-common = { path = "../lock-common" }
-    num_enum = "0.7"
+    num_enum = { version = "0.7", default-features = false }
 
     [[bin]]
     name = "lock"
     path = "src/main.rs"
 
     [profile.dev]
-    opt-level = 1
+    opt-level = 3
     debug = false
     debug-assertions = false
     overflow-checks = false
