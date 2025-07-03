@@ -34,7 +34,7 @@ async fn main() -> Result<(), anyhow::Error> {
 
     let connect_probe: &mut KProbe = bpf.program_mut("lock_connect").unwrap().try_into()?;
     connect_probe.load()?;
-    connect_probe.attach("inet_csk_accept", 0)?;
+    connect_probe.attach("__x64_sys_connect", 0)?;
 
     // The following programs are commented out because they do not exist in the current
     // eBPF code (lock-ebpf/src/main.rs). Trying to load them would cause a panic.
