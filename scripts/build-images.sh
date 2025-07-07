@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# /workspace/scripts/build-images.sh
 set -e
 
 echo "Building S.O.C.K. Docker images..."

@@ -1,4 +1,6 @@
 #!/bin/bash
+
+# /workspace/scripts/build-kernel.sh
 set -e
 
 echo "Building L.O.C.K. kernel..."
