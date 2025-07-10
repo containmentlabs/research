@@ -1,6 +1,9 @@
 # Use the official dev containers base image for Ubuntu 22.04
 FROM mcr.microsoft.com/devcontainers/base:ubuntu-22.04
 
+# Passwordless sudo. Use for research use only
+RUN echo 'vscode ALL=(ALL) NOPASSWD:ALL' >> /etc/sudoers.d/99-vscode
+
 # Install essential system dependencies for BPF, Rust, Go, and Git
 RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     && apt-get -y install --no-install-recommends wget software-properties-common gnupg lsb-release \
@@ -33,7 +36,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && rustup component add rust-src --toolchain nightly \
     && cargo install bpf-linker \
     && cargo install cargo-generate
-ENV PATH="/home/vscode/.cargo/bin:${PATH}"
+sENV PATH="/home/vscode/.cargo/bin:${PATH}"
 
 COPY --chown=vscode:vscode pyproject.toml ./
 RUN python3 -m venv .venv
