@@ -29,7 +29,7 @@ cargo build --release
 echo "Building Go loader..."
 cd ../loader
 go mod tidy
-go build -o lock-loader .
+go build -buildvcs=false -o lock-loader .
 
 echo "L.O.C.K. kernel build complete!"
 echo ""

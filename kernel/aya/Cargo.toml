@@ -1,3 +1,6 @@
+    [workspace]
+    members = ["xtask", "lock-common", "lock-ebpf"]
+
     [package] 
     name = "lock"
     version = "0.1.0"

@@ -61,8 +61,8 @@ checkpoints/
 .env.local
 Thumbs.db 
 target/
-cargo.lock
 todo.md
 build-log.txt
+build-log_2.txt
 lock
 lock.log
