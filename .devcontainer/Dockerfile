@@ -15,7 +15,7 @@ RUN apt-get update && export DEBIAN_FRONTEND=noninteractive \
     build-essential libssl-dev pkg-config python3-dev python3.10-venv \
     clang-18 llvm-18 llvm-18-dev libclang-18-dev libpolly-18-dev \
     libbpf-dev libelf-dev zlib1g-dev linux-tools-generic linux-headers-generic \
-        curl git \
+    curl git \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # ---- GO INSTALL (latest 1.23.0 for go.mod) ----
@@ -36,11 +36,11 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
     && rustup component add rust-src --toolchain nightly \
     && cargo install bpf-linker \
     && cargo install cargo-generate
-sENV PATH="/home/vscode/.cargo/bin:${PATH}"
+ENV PATH="/home/vscode/.cargo/bin:${PATH}"
 
 COPY --chown=vscode:vscode pyproject.toml ./
 RUN python3 -m venv .venv
- RUN . .venv/bin/activate && pip install --default-timeout=600 -e ".[dev]"
+RUN . .venv/bin/activate && pip install --default-timeout=600 -e ".[dev]"
 
 # Automatically activate Python venv in new terminals
 RUN echo 'source /workspace/.venv/bin/activate' >> /home/vscode/.bashrc
