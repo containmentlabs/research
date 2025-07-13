@@ -44,3 +44,4 @@ RUN . .venv/bin/activate && pip install --default-timeout=600 -e ".[dev]"
 
 # Automatically activate Python venv in new terminals
 RUN echo 'source /workspace/.venv/bin/activate' >> /home/vscode/.bashrc
+
