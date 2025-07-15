@@ -45,7 +45,6 @@ htmlcov/
 *.synctex.gz
 *.fdb_latexmk
 *.fls
-.dockerignore
 *.tfstate
 *.tfstate.*
 .terraform/
