@@ -3,19 +3,21 @@ set -e
 
 echo "--- Starting Post-Container-Creation Setup ---"
 
-# Install essential Rust eBPF tooling
-echo "--- Installing eBPF build tools... ---"
-cargo install bpf-linker
-cargo install cargo-generate
-
-# The Python environment and Rust toolchain are now pre-installed.
-# just need to activate the virtual environment for the following script commands.
-. .venv/bin/activate
-
+# Kernel build (all build failures visible)
 echo "--- Building project kernel... ---"
-bash ./scripts/build-kernel.sh
+if ! bash ./scripts/build-kernel.sh; then
+    echo "(!) Kernel build failed -- see above for details."
+    exit 1
+fi
 
+# (Optional) Build images
 echo "--- Building project container images... ---"
-bash ./scripts/build-images.sh
+if [ -f ./scripts/build-images.sh ]; then
+    if ! bash ./scripts/build-images.sh; then
+        echo "(!) Image build failed (optional step, continue anyway)"
+    fi
+else
+    echo "(!) build-images.sh not found -- skipping container images build."
+fi
 
 echo "--- Project Setup Complete ---"
