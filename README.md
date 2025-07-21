@@ -22,7 +22,7 @@ This guide provides the steps to get the development environment up and running 
 
 3.  **Wait for the build to finish**.
     -   This will set up Rust (with nightly & bpfel-unknown-none), Go, Python, and all other dependencies inside a Docker container.
-    -   The first build can take a while! Go get a coffee. ☕
+    -   The first build can take a while.
 
 4.  **Verify the Build**:
     -   Once the container is running, open the VS Code terminal (it should be connected to the container).
@@ -74,7 +74,7 @@ Once you are inside the container's shell:
 ## 6. FAQ
 
 -   **Why passwordless sudo?**
-    -   So the build scripts run smoothly in the development container. This should never be used in production!
+    -   So the build scripts run smoothly in the development container. This should never be used in production.
 
 -   **Why is the first build so slow?**
     -   The container compiles everything from scratch for a consistent setup. Future builds will be much faster by using cached layers.
