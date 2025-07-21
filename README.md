@@ -88,4 +88,40 @@ Once you are inside the container's shell:
         -   Rust Loader: `kernel/aya/target/release/lock`
         -   Go Loader: `kernel/loader/lock-loader`
 
+## 7. Testing the Kernel
+
+This process verifies that the eBPF program is correctly intercepting system calls.
+
+1.  **Ensure a Clean State**: Restart the container to kill any old, running processes.
+    ```bash
+    docker-compose restart research-app
+    ```
+    *Expected output:*
+    ```text
+    [+] Running 1/1
+     ✔ Container research-app Restarted                                                                     0.6s
+    ```
+
+2.  **Run the Loader in the Background**: The loader is the user-space program that loads the eBPF code into the kernel and listens for events. We run it as the `root` user and in the background (`-d`). *Note the corrected path to the loader binary.*
+    ```bash
+    docker-compose exec -d --user root research-app /workspace/kernel/aya/target/x86_64-unknown-linux-gnu/release/lock
+    ```
+    This command runs in the background and should not produce any output.
+
+3.  **Trigger an eBPF Event**: In a separate terminal, run a command that will be intercepted. For example, the `curl` command will trigger the `connect` system call probe.
+    ```bash
+    docker-compose exec research-app curl -s https://www.google.com > /dev/null
+    ```
+    This command will produce no output.
+
+4.  **Check the Log File for Output**: The loader is configured to write events to `lock.log`. Check its contents to see the captured event.
+    ```bash
+    docker-compose exec research-app cat /workspace/lock.log
+    ```
+    You should see `BlockEvent` entries, which confirms the kernel is working.
+
+    *Example output (PID/UID values may vary):*
+    ```text
+    BlockEvent { comm: "curl", pid: 12345, ppid: 123, uid: 1000, addr: "142.250.191.78" }
+    ```
 ---
