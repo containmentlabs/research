@@ -11,6 +11,7 @@ use bytes::BytesMut;
 use clap::Parser;
 use log::{info, warn};
 use lock_common::BlockEvent;
+use std::fs::File;
 use std::net::{SocketAddr, UdpSocket};
 use tokio::{signal, task};
 
@@ -21,7 +22,12 @@ struct Opt;
 async fn main() -> Result<(), anyhow::Error> {
     let _opt = Opt::parse();
 
-    env_logger::init();
+    // Set up file-based logging
+    let file = File::create("/workspace/lock.log")?;
+    env_logger::Builder::new()
+        .target(env_logger::Target::Pipe(Box::new(file)))
+        .filter(None, log::LevelFilter::Info)
+        .init();
 
     // This will load the eBPF program ELF file.
     let mut bpf = Bpf::load(include_bytes_aligned!(
