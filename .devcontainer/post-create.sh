@@ -3,6 +3,13 @@ set -e
 
 echo "--- Starting Post-Container-Creation Setup ---"
 
+# Fix socket permissions and file line endings
+sudo chgrp docker /var/run/docker.sock
+sudo dos2unix ./scripts/build-kernel.sh
+if [ -f ./scripts/build-images.sh ]; then
+    sudo dos2unix ./scripts/build-images.sh
+fi
+
 # Kernel build (all build failures visible)
 echo "--- Building project kernel... ---"
 if ! bash ./scripts/build-kernel.sh; then

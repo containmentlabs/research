@@ -1,0 +1,7 @@
+[workspace]
+members = [
+    "aya",
+    "cli-helper",
+    "aya/lock-common"
+]
+resolver = "2" 
